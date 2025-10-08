@@ -14,6 +14,7 @@ tommyfi is a minimalist terminal-based music system built purely in bash.it can 
 # Setup
 in linux (debian) or android (termux):
 - sudo apt update
+- sudo apt install mpv
 - git clone https://github.com/Fenrir-Security-Systems/tommyfi.git
 - cd tommyfi
 - ./tommyfimusic.sh

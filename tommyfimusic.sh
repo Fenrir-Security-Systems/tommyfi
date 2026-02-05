@@ -1,20 +1,15 @@
 #!/bin/bash
 
-# --- Configuration ---
 SCRIPT_DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" & pwd)"
 DATA_DIR="$SCRIPT_DIR/tommyfi_data"
 SONGS_DB="$DATA_DIR/songs.csv"
 USERS_DB="$DATA_DIR/users.csv"
 HISTORY_FILE=""
 USERNAME=""
-USER_ROLE="user" # Default role
+USER_ROLE="user" 
 
-# --- Database and State ---
 declare -A playlist
 
-# --- Core Functions ---
-
-# Load songs from the CSV database into memory
 load_songs() {
     playlist=()
     while IFS=';' read -r id title url; do
@@ -24,12 +19,10 @@ load_songs() {
     done < "$SONGS_DB"
 }
 
-# --- Function to handle user login and history ---
 handle_user() {
     read -p "Enter your name (tag): " USERNAME
     HISTORY_FILE="$DATA_DIR/$USERNAME.history"
 
-    # Check user role
     local role_from_db=$(grep "^$USERNAME;" "$USERS_DB" | cut -d';' -f2)
     if [[ -n "$role_from_db" ]]; then
         USER_ROLE="$role_from_db"
@@ -63,7 +56,6 @@ handle_user() {
     fi
 }
 
-# --- Function to update user history ---
 update_history() {
     local song_name=$1
     grep -v "^$song_name$" "$HISTORY_FILE" > "$HISTORY_FILE.tmp"
@@ -72,7 +64,6 @@ update_history() {
     sed -i '21,$d' "$HISTORY_FILE"
 }
 
-# --- Function to play a song and update history ---
 play_song() {
     local selected_song=$1
     printf "playing: %s\n" "$selected_song"
@@ -82,7 +73,6 @@ play_song() {
     update_history "$selected_song"
 }
 
-# --- Admin Functions ---
 add_song() {
     if [[ "$USER_ROLE" != "admin" ]]; then
         echo "Permission Denied. Only admins can add songs."
@@ -129,9 +119,6 @@ delete_song() {
     sleep 1
 }
 
-# --- Main Logic ---
-
-# Load songs from DB at the start
 load_songs
 
 handle_user
